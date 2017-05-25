@@ -5,14 +5,50 @@ var ctx = canvas.getContext("2d");
 var dots = [];
 var img = new Image();
 
+var turtleX = 0;
+var turtleY = 450;
+
 img.onload = function() {
-	ctx.drawImage(img, 0, 450 ,50,50);
+	ctx.drawImage(img, turtleX, turtleY ,50,50);
+}
+
+var turtle = {
+
+	// direction of turtle (North = 1,East = 2,South = 3, West = 4)
+	up : {
+		towards : 1,
+		src  : "images/turtle-up.png"
+	},
+	right : {
+		towards : 2,
+		src  : "images/turtle-right.png"
+	},
+	down : {
+		towards : 3,
+		src  : "images/turtle-down.png"
+	},
+	left : {
+		towards : 4,
+		src  : "images/turtle-left.png"
+	}
+}
+
+var oppos = {
+	1 : 3,
+	2 : 4,
+	3 : 1,
+	4 : 2
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-img.src = "turtle.png";
+initTurtle = function(){
+	img.src = turtle.up.src;
+	img.towards = turtle.up.towards;
+	drawDots();
+}
+
 
 var y = canvas.height;
 var x = canvas.width;
@@ -48,30 +84,90 @@ drawDots = function(){
 	}
 }
 
-var TO_RADIANS = Math.PI/180; 
-function drawRotatedImage(image, x, y, angle) { 
- 
-	// save the current co-ordinate system 
-	// before we screw with it
-	ctx.save(); 
- 
-	// move to the middle of where we want to draw our image
-	ctx.translate(x, y);
- 
-	// rotate around that point, converting our 
-	// angle from degrees to radians 
-	ctx.rotate(angle * TO_RADIANS);
- 
-	// draw it up and to the left by half the width
-	// and height of the image 
-	ctx.drawImage(image, -(image.width/2), -(image.height/2),50,50);
- 
-	// and restore the co-ords to how they were when we began
-	ctx.restore(); 
+var moveTurtle = function(direction,x,y){
+	console.log("old coordinates : ",turtleX,turtleY);
+	console.log(direction);
+	switch (direction) {
+		case 1 :
+			// Move towards north
+			turtleY -= 50;
+			break;
+		case 2 :
+			// Move towards east
+			turtleX += 50;
+			break;
+		case 3 :
+			// Move towards south
+			turtleY += 50;
+			break;
+		case 4 :
+			// Move towards west
+			turtleX -= 50;
+			break;
+	}
+
+	console.log("new coordinates : ",turtleX,turtleY);
+	ctx.drawImage(img, turtleX, turtleY ,50,50);	
 }
 
 var left = function(){
-	drawRotatedImage(img,canvas.width,canvas.height,90);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	var file = img.src.slice(img.src.lastIndexOf('/'))
+	switch (file) {
+		case "/turtle-up.png":
+		  img.src = turtle.left.src;
+		  img.towards = turtle.left.towards;
+		  break;
+		case "/turtle-left.png":
+		  img.src = turtle.down.src;
+		  img.towards = turtle.down.towards;
+		  break;
+		case "/turtle-down.png":
+		  img.src = turtle.right.src;
+		  img.towards = turtle.right.towards;
+		  break;
+		case "/turtle-right.png":
+		  img.src = turtle.up.src;
+		  img.towards = turtle.up.towards;
+		  break;
+	}
+	drawDots();
+}
+
+var right = function(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	var file = img.src.slice(img.src.lastIndexOf('/'))
+	switch (file) {
+		case "/turtle-up.png":
+		  img.src = turtle.right.src;
+		  img.towards = turtle.right.towards; 
+		  break;
+		case "/turtle-right.png":
+		  img.src = turtle.down.src;
+		  img.towards = turtle.down.towards;
+		  break;
+		case "/turtle-down.png":
+		  img.src = turtle.left.src;
+		  img.towards = turtle.left.towards;
+		  break;
+		case "/turtle-left.png":
+		  img.src = turtle.up.src;
+		  img.towards = turtle.up.towards;
+		  break;
+	}
+	drawDots();
+}
+
+var up = function(){
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	drawDots();
+	moveTurtle(img.towards,turtleX,turtleY);
+}
+
+var down = function(){
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	drawDots();
+	moveTurtle(oppos[img.towards],turtleX,turtleY);
 }
 
 function keyDownHandler(e) {
@@ -104,6 +200,4 @@ function keyUpHandler(e) {
     }
 }
 
-
-drawDots();
-
+initTurtle();
