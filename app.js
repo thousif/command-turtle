@@ -1,4 +1,7 @@
-
+/*
+	Command Turtle Application
+	Author: Teejay
+*/
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
@@ -8,12 +11,12 @@ var img = new Image();
 var turtleX = 0;
 var turtleY = 450;
 
-img.onload = function() {
-	ctx.drawImage(img, turtleX, turtleY ,50,50);
-}
+var dotRowCount = 10;
+var dotColCount = 10;
+var dotOffsetLeft = 25;
+var dotOffsetTop = 25;
 
 var turtle = {
-
 	// direction of turtle (North = 1,East = 2,South = 3, West = 4)
 	up : {
 		towards : 1,
@@ -34,11 +37,18 @@ var turtle = {
 }
 
 var oppos = {
+	// opposite directions, required when moving backwards
 	1 : 3,
 	2 : 4,
 	3 : 1,
 	4 : 2
 }
+
+var rocks = {
+	// x : y coordinates
+	25  : 325,
+	275 : 375
+};
 
 var directions = {
 	1 : "North",
@@ -50,25 +60,21 @@ var directions = {
 document.addEventListener("keydown", keyDownHandler, false);
 
 initTurtle = function(){
+	img.onload = function() {
+		ctx.drawImage(img, turtleX, turtleY ,50,50);
+	}
+
 	img.src = turtle.up.src;
 	img.towards = turtle.up.towards;
+	for(c=0; c<dotColCount; c++) {
+	    dots[c] = [];
+	    for(r=0; r<dotRowCount; r++) {
+	        dots[c][r] = { x: 0, y: 0 };
+	    }
+	}
 	updateView(img.towards,turtleX,turtleY);
 	drawDots();
-}
-
-var y = canvas.height;
-var x = canvas.width;
-
-var dotRowCount = 10;
-var dotColCount = 10;
-var dotOffsetLeft = 25;
-var dotOffsetTop = 25;
-
-for(c=0; c<dotColCount; c++) {
-    dots[c] = [];
-    for(r=0; r<dotRowCount; r++) {
-        dots[c][r] = { x: 0, y: 0 };
-    }
+	drawRocks();
 }
 
 drawDots = function(){
@@ -90,20 +96,41 @@ drawDots = function(){
 	}
 }
 
+drawRocks = function(){
+	for(c=0; c<dotColCount; c++) {
+	    for(r=0; r<dotRowCount; r++) {
+	    	var dotX = c * (canvas.width/10) + dotOffsetLeft;
+	    	var dotY = r * (canvas.height/10) + dotOffsetTop;
+	    	
+	    	if(rocks[dotX] && rocks[dotX] == dotY){
+	    		ctx.beginPath();
+				ctx.arc(dotX,dotY, 5, 0, Math.PI*2, false);
+				ctx.fillStyle = "brown";
+				ctx.fill();
+				ctx.closePath();
+	    	}
+
+	    }
+	}
+}
+
 var updateView = function(d,x,y){
- document.getElementById("turtleloc").innerHTML = "("+x+","+y+") towards " + directions[d];
+	document.getElementById("turtleloc").innerHTML = "("+x+","+y+") towards " + directions[d];
 }
 
 var checkCollision = function(x,y,fn){
+	// check if its colliding with the walls
 	if( (x < 0 || x >= canvas.width) || (y < 0 || y >= canvas.height) ){
+		return true;
+	}
+	// check if its colliding with the rocks
+	if(rocks[x+25] && rocks[x+25] == (y+25)){
 		return true;
 	}
 	return false;
 }
 
 var moveTurtle = function(direction,x,y){
-	console.log("old coordinates : ",turtleX,turtleY);
-	console.log(direction);
 	switch (direction) {
 		case 1 :
 			// Move towards north
@@ -135,9 +162,7 @@ var moveTurtle = function(direction,x,y){
 			break;
 	}
 
-
 	updateView(direction,turtleX,turtleY);
-	console.log("new coordinates : ",turtleX,turtleY);
 	ctx.drawImage(img, turtleX, turtleY ,50,50);	
 }
 
@@ -163,6 +188,7 @@ var left = function(){
 		  break;
 	}
 	drawDots();
+	drawRocks();
 }
 
 var right = function(){
@@ -187,36 +213,35 @@ var right = function(){
 		  break;
 	}
 	drawDots();
+	drawRocks();
 }
 
 var up = function(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	drawDots();
+	drawRocks();
 	moveTurtle(img.towards,turtleX,turtleY);
 }
 
 var down = function(){
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	drawDots();
+	drawRocks();
 	moveTurtle(oppos[img.towards],turtleX,turtleY);
 }
 
 function keyDownHandler(e) {
     switch(e.keyCode){
     	case 37 :
-    		console.log("37");
     		left();
     	    break;
     	case 38 :
-    		console.log("38");
     		up();
     	    break;
     	case 39 :
-    		console.log("39");
     		right();
     	    break;
     	case 40 :
-    		console.log("40");
     		down();
     	    break; 
     }
