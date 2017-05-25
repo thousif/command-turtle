@@ -40,15 +40,21 @@ var oppos = {
 	4 : 2
 }
 
+var directions = {
+	1 : "North",
+	2 : "East",
+	3 : "South",
+	4 : "West"
+}
+
 document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
 
 initTurtle = function(){
 	img.src = turtle.up.src;
 	img.towards = turtle.up.towards;
+	updateView(img.towards,turtleX,turtleY);
 	drawDots();
 }
-
 
 var y = canvas.height;
 var x = canvas.width;
@@ -84,7 +90,11 @@ drawDots = function(){
 	}
 }
 
-checkCollision = function(x,y,fn){
+var updateView = function(d,x,y){
+ document.getElementById("turtleloc").innerHTML = "("+x+","+y+") towards " + directions[d];
+}
+
+var checkCollision = function(x,y,fn){
 	if( (x < 0 || x >= canvas.width) || (y < 0 || y >= canvas.height) ){
 		return true;
 	}
@@ -125,6 +135,8 @@ var moveTurtle = function(direction,x,y){
 			break;
 	}
 
+
+	updateView(direction,turtleX,turtleY);
 	console.log("new coordinates : ",turtleX,turtleY);
 	ctx.drawImage(img, turtleX, turtleY ,50,50);	
 }
@@ -207,15 +219,6 @@ function keyDownHandler(e) {
     		console.log("40");
     		down();
     	    break; 
-    }
-}
-
-function keyUpHandler(e) {
-    if(e.keyCode == 39) {
-        rightPressed = false;
-    }
-    else if(e.keyCode == 37) {
-        leftPressed = false;
     }
 }
 

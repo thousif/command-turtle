@@ -4,13 +4,30 @@
     <meta charset="utf-8" />
     <title>Command turtle</title>
     <style>
-    	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; }
+    	* { 
+    		padding: 0; 
+    		margin: 0;
+    	}
+    	canvas { 
+    		background: #eee; 
+    		display: block; 
+    		margin: 0 auto; 
+    	}
+    	.footer{
+		    max-width: 500px;
+		    margin: 0 auto;
+		    text-align: center;
+		    padding: 50px;
+		    color: #5d5656
+    	}
     </style>
 </head>
 <body>
 
 <canvas id="myCanvas" width="500" height="500"></canvas>
+<div class="footer">
+	<h4>Turtle is now at <span id ="turtleloc"></span></h4>
+</div>
 
 <script src="app.js"></script>
 
