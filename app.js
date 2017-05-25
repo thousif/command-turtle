@@ -84,24 +84,43 @@ drawDots = function(){
 	}
 }
 
+checkCollision = function(x,y,fn){
+	if( (x < 0 || x >= canvas.width) || (y < 0 || y >= canvas.height) ){
+		return true;
+	}
+	return false;
+}
+
 var moveTurtle = function(direction,x,y){
 	console.log("old coordinates : ",turtleX,turtleY);
 	console.log(direction);
 	switch (direction) {
 		case 1 :
 			// Move towards north
+			if(checkCollision(turtleX,turtleY - 50)){
+				break;
+			} 
 			turtleY -= 50;
 			break;
 		case 2 :
 			// Move towards east
+			if(checkCollision(turtleX + 50,turtleY)){
+				break;
+			}
 			turtleX += 50;
 			break;
 		case 3 :
 			// Move towards south
+			if(checkCollision(turtleX,turtleY + 50)){
+				break;
+			}
 			turtleY += 50;
 			break;
 		case 4 :
 			// Move towards west
+			if(checkCollision(turtleX - 50,turtleY)){
+				break;
+			}
 			turtleX -= 50;
 			break;
 	}
