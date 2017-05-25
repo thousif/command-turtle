@@ -115,7 +115,7 @@ drawRocks = function(){
 }
 
 var updateView = function(d,x,y){
-	document.getElementById("turtleloc").innerHTML = "("+x+","+y+") towards " + directions[d];
+	document.getElementById("turtleloc").innerHTML = "("+x/50+","+y/50+") towards " + directions[d];
 }
 
 var checkCollision = function(x,y,fn){
